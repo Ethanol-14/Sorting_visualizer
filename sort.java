@@ -21,13 +21,14 @@ public class sort {
 				if (nums[smallestNumsIndex] < nums[finalSmallestNumIndex]) { //finds the index of the smallest integer
 					finalSmallestNumIndex = smallestNumsIndex;
 				}
-				visualize.updateArray(nums, _smallest, _largest);
 				delay(delay);
 			}
 			//swaps the index of the smallest integer with the largest index you KNOW is sorted (starting at 0, then 1, then 2, etc.)
 			smallestNum = nums[finalSmallestNumIndex];
 			nums[finalSmallestNumIndex] = nums[largestSortedIndex];
+			visualize.updateIndex(nums[largestSortedIndex], finalSmallestNumIndex);
 			nums[largestSortedIndex] = smallestNum;
+			visualize.updateIndex(smallestNum, largestSortedIndex);
 			
 			//System.out.println(arrayToString(nums));
 		}
@@ -46,10 +47,11 @@ public class sort {
 				if (nums[i] > nums[i+1]) { //basically, sorts every single pair of adjacent integers, eventually sorting everything
 					largerInt = nums[i];
 					nums[i] = nums[i+1];
+					visualize.updateIndex(nums[i+1], i);
 					nums[i+1] = largerInt;
+					visualize.updateIndex(largerInt, i+1);
 					swaps++;
 				}
-				visualize.updateArray(nums, _smallest, _largest);
 				delay(delay);
 			}
 			if (swaps == 0) { //counts the number of swaps performed, essentially checking if the list is sorted
@@ -75,13 +77,6 @@ public class sort {
 				secondHalf[i-nums.length/2] = nums[i];
 				delay(delay);
 			}
-			
-			//now, sort the halves
-			System.out.println(_smallest);
-			System.out.println((nums.length/2)-1);
-			System.out.println((nums.length/2));
-			System.out.println(_largest);
-			System.out.println();
 			
 			firstHalf = merge(firstHalf, delay, _smallest, _smallest+(nums.length/2)-1);
 			secondHalf = merge(secondHalf, delay, _smallest+(nums.length/2), _largest);
@@ -122,7 +117,7 @@ public class sort {
 					secondRampIndex++;
 				}
 			}
-			visualize.updateArray(memoryNums, _smallest, _smallest+i);
+			visualize.updateIndex(memoryNums[i], _smallest+i);
 			delay(delay);
 		}
 		
@@ -136,23 +131,32 @@ public class sort {
 		int[] memoryNums = new int[nums.length];
 		int smallersIndex = 0;
 		int largersIndex = nums.length-1;
+		int largersProgress = 0;
 		
 		//take the first integer, then shove everything smaller to its left, and everything larger to its right
 		for (int i = 1; i < nums.length; i++) {
 			//we'll start by putting all the smaller integers from left to right
 			if (nums[i] < nums[0]) {
+				
+				visualize.updateIndex(nums[i], _smallest+smallersIndex);
+				
 				memoryNums[smallersIndex] = nums[i];
 				smallersIndex++;
 			}
 			//then put all the larger integers from right to left
 			else {
+				
+				visualize.updateIndex(nums[i], _largest-largersProgress);
+				
 				memoryNums[largersIndex] = nums[i];
 				largersIndex--;
+				largersProgress++;
 			}
 			delay(delay);
 		}
 		//then, put the first integer in the remaining gap
 		memoryNums[smallersIndex] = nums[0];
+		visualize.updateIndex(nums[0], _smallest+smallersIndex);
 
 		//System.out.println(arrayToString(memoryNums));
 		
@@ -161,14 +165,12 @@ public class sort {
 			int[] smallers = new int[smallersIndex];
 			for (int i = 0; i < smallers.length; i++) {
 				smallers[i] = memoryNums[i];
-				
 				delay(delay);
 			}
-			smallers = quick(smallers, delay, _smallest, _largest);
+			smallers = quick(smallers, delay, _smallest, _smallest+smallersIndex-1);
 			//then, get our sorted section back, and put them back into memoryNums
 			for (int i = 0; i < smallers.length; i++) {
 				memoryNums[i] = smallers[i];
-				
 				delay(delay);
 			}
 		}
@@ -177,14 +179,12 @@ public class sort {
 			int[] largers = new int[memoryNums.length-(smallersIndex+1)];
 			for (int i = 0; i < largers.length; i++) {
 				largers[i] = memoryNums[i+smallersIndex+1];
-				
 				delay(delay);
 			}
-			largers = quick(largers, delay, _smallest, _largest);
+			largers = quick(largers, delay, _smallest+smallersIndex+1, _largest);
 			//then, get our sorted section back, and put them back into memoryNums
 			for (int i = 0; i < largers.length; i++) {
 				memoryNums[i+smallersIndex+1] = largers[i];
-				
 				delay(delay);
 			}
 		}
@@ -230,7 +230,7 @@ public class sort {
 				nums[cumSumOcc+x] = i+smallest;
 				
 				//System.out.println(arrayToString(nums));
-				visualize.updateArray(nums, _smallest, _largest);
+				visualize.updateIndex(i+smallest, cumSumOcc+x);
 				delay(delay);
 			}
 			cumSumOcc += occurences[i];

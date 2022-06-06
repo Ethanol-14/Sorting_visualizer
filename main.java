@@ -2,7 +2,7 @@ public class main {
 	public static void main(String[] args) {
 		
 		int tests = 1; //the amount of tests you want to run
-		int arrayLength = 512; //the length of the array you want to shuffle and sort
+		int arrayLength = 256; //the length of the array you want to shuffle and sort
 		int delay = 1; //delay in milliseconds, so you can actually watch things happen in front of your slow human eyes
 		
 		int largest = 0;
@@ -24,7 +24,7 @@ public class main {
 			
 			//sort and print
 			//System.out.println(arrayToString(nums));
-			nums = sort.merge(nums, delay, 0, largest);
+			nums = sort.selection(nums, delay, 0, largest);
 			//System.out.println(arrayToString(nums));
 			
 			//check if sorted

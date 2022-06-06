@@ -14,8 +14,8 @@ public class visualize extends JPanel {
 	private static int[] nums = new int[0];
 	private static int largest = 0;
 	
-	public static JPanel panel = new visualize();
-	public static JFrame frame = new JFrame("The sight of sorting"); //title for the window
+	private static JPanel panel = new visualize();
+	private static JFrame frame = new JFrame("The sight of sorting"); //title for the window
 	
 	public static void init(int _length, int _largest) {
 		panel.setBackground(Color.black); //window's panel's background
@@ -35,14 +35,18 @@ public class visualize extends JPanel {
 		frame.repaint();
 	}
 	
-	//I'M NOT GIVING UP ON JFRAME JUST YET
+	public static void updateIndex(int num, int index) {
+		nums[index] = num;
+		frame.repaint();
+	}
+	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
 		g.setColor(Color.white);
 		
 		for (int i = 0; i < nums.length; i++) {	
-			g.fillRect((i*getWidth())/nums.length, (nums.length-nums[i])*(getHeight()/nums.length), (getWidth()/nums.length)+1, ((nums[i]*getHeight())/largest)+((nums[i]-nums.length)*-1));
+			g.fillRect((i*getWidth())/nums.length, getHeight()-((nums[i]*getHeight())/largest), (getWidth()/nums.length)+1, (nums[i]*getHeight())/largest);
 		}
 	}
 }
