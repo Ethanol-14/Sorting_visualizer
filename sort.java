@@ -1,6 +1,21 @@
 import java.util.Random;
 
 public class sort {
+	
+	private static int comparisons = 0;
+	private static int arrayAccesses = 0;
+	
+	public static void reset() {
+		comparisons = 0;
+		arrayAccesses = 0;
+	}
+	public static int getComparisons() {
+		return comparisons;
+	}
+	public static int getArrayAccesses() {
+		return arrayAccesses;
+	}
+	
 	public static int[] selection(int[] nums, int delay, int _smallest, int _largest) {
 		
 		int finalSmallestNumIndex = 0;
@@ -21,6 +36,7 @@ public class sort {
 				if (nums[smallestNumsIndex] < nums[finalSmallestNumIndex]) { //finds the index of the smallest integer
 					finalSmallestNumIndex = smallestNumsIndex;
 				}
+				comparisons++;
 				delay(delay);
 			}
 			//swaps the index of the smallest integer with the largest index you KNOW is sorted (starting at 0, then 1, then 2, etc.)
@@ -29,6 +45,7 @@ public class sort {
 			visualize.updateIndex(nums[largestSortedIndex], finalSmallestNumIndex);
 			nums[largestSortedIndex] = smallestNum;
 			visualize.updateIndex(smallestNum, largestSortedIndex);
+			arrayAccesses += 2;
 			
 			//System.out.println(arrayToString(nums));
 		}
@@ -51,7 +68,9 @@ public class sort {
 					nums[i+1] = largerInt;
 					visualize.updateIndex(largerInt, i+1);
 					swaps++;
+					arrayAccesses += 2;
 				}
+				comparisons++;
 				delay(delay);
 			}
 			if (swaps == 0) { //counts the number of swaps performed, essentially checking if the list is sorted
@@ -59,6 +78,30 @@ public class sort {
 			}
 			//System.out.println(arrayToString(nums));
 		}
+		
+		return nums;
+	}
+	
+	public static int[] insertion(int[] nums, int delay, int _smallest, int _largest) {
+		
+		int largerInt = 0;
+		int i = 0;
+		
+		for (int sortedIndeces = 1; sortedIndeces < nums.length; sortedIndeces++) {
+			i = sortedIndeces;
+			while (i != 0 && nums[i] < nums[i-1]) {
+				largerInt = nums[i];
+				nums[i] = nums[i-1];
+				visualize.updateIndex(nums[i], i);
+				nums[i-1] = largerInt;
+				visualize.updateIndex(nums[i-1], i-1);
+				i--;
+				comparisons++;
+				arrayAccesses += 2;
+				delay(delay);
+			}
+		}
+		
 		return nums;
 	}
 	
@@ -71,10 +114,12 @@ public class sort {
 			
 			for (int i = 0; i < nums.length/2; i++) {
 				firstHalf[i] = nums[i];
+				arrayAccesses++;
 				delay(delay);
 			}
 			for (int i = nums.length/2; i < nums.length; i++) {
 				secondHalf[i-nums.length/2] = nums[i];
+				arrayAccesses++;
 				delay(delay);
 			}
 			
@@ -84,10 +129,12 @@ public class sort {
 			//now, join the halves
 			for (int i = 0; i < nums.length/2; i++) {
 				nums[i] = firstHalf[i];
+				arrayAccesses++;
 				delay(delay);
 			}
 			for (int i = nums.length/2; i < nums.length; i++) {
 				nums[i] = secondHalf[i-nums.length/2];
+				arrayAccesses++;
 				delay(delay);
 			}
 		}
@@ -102,15 +149,18 @@ public class sort {
 			if (firstRampIndex >= nums.length/2) {
 				memoryNums[i] = nums[secondRampIndex];
 				secondRampIndex++;
+				comparisons++;
 			}
 			else if (secondRampIndex >= nums.length) {
 				memoryNums[i] = nums[firstRampIndex];
 				firstRampIndex++;
+				comparisons++;
 			}
 			else {
 				if (nums[firstRampIndex] < nums[secondRampIndex]) {
 					memoryNums[i] = nums[firstRampIndex];
 					firstRampIndex++;
+					comparisons++;
 				}
 				else {
 					memoryNums[i] = nums[secondRampIndex];
@@ -119,9 +169,8 @@ public class sort {
 			}
 			visualize.updateIndex(memoryNums[i], _smallest+i);
 			delay(delay);
+			arrayAccesses++;
 		}
-		
-		//System.out.println(arrayToString(memoryNums));
 		
 		return memoryNums;
 	}
@@ -142,6 +191,7 @@ public class sort {
 				
 				memoryNums[smallersIndex] = nums[i];
 				smallersIndex++;
+				comparisons++;
 			}
 			//then put all the larger integers from right to left
 			else {
@@ -152,11 +202,13 @@ public class sort {
 				largersIndex--;
 				largersProgress++;
 			}
+			arrayAccesses++;
 			delay(delay);
 		}
 		//then, put the first integer in the remaining gap
 		memoryNums[smallersIndex] = nums[0];
 		visualize.updateIndex(nums[0], _smallest+smallersIndex);
+		arrayAccesses++;
 
 		//System.out.println(arrayToString(memoryNums));
 		
@@ -165,57 +217,50 @@ public class sort {
 			int[] smallers = new int[smallersIndex];
 			for (int i = 0; i < smallers.length; i++) {
 				smallers[i] = memoryNums[i];
+				arrayAccesses++;
 				delay(delay);
 			}
 			smallers = quick(smallers, delay, _smallest, _smallest+smallersIndex-1);
 			//then, get our sorted section back, and put them back into memoryNums
 			for (int i = 0; i < smallers.length; i++) {
 				memoryNums[i] = smallers[i];
+				arrayAccesses++;
 				delay(delay);
 			}
+			comparisons++;
 		}
 		//then, call ourself to sort the larger section IF that section's length > 1
 		if (largersIndex < nums.length-2) {
 			int[] largers = new int[memoryNums.length-(smallersIndex+1)];
 			for (int i = 0; i < largers.length; i++) {
 				largers[i] = memoryNums[i+smallersIndex+1];
+				arrayAccesses++;
 				delay(delay);
 			}
 			largers = quick(largers, delay, _smallest+smallersIndex+1, _largest);
 			//then, get our sorted section back, and put them back into memoryNums
 			for (int i = 0; i < largers.length; i++) {
 				memoryNums[i+smallersIndex+1] = largers[i];
+				arrayAccesses++;
 				delay(delay);
 			}
+			comparisons++;
 		}
-
+		
 		//finally, return out sorted section. Eventually, our "section" will be stitched back up as the whole array, and we'll do one final return!
 		return memoryNums;
 	}
 	
 	public static int[] counting(int[] nums, int delay, int _smallest, int _largest) {
 		
-		//first, need to know our smallest and largest integers
-		int smallest = nums[0];
-		int largest = nums[0];
-		
-		for (int i = 1; i < nums.length; i++) {
-			if (nums[i] < smallest) {
-				smallest = nums[i];
-			}
-			else if (nums[i] > largest) {
-				largest = nums[i];
-			}
-			delay(delay);
-		}
-		
 		//now, we make a list that fits the range perfectly, to avoid wasting space in the event that the sorted list indeces don't perfectly line up with the values at those indeces
-		int[] occurences = new int[(largest-smallest)+1];
+		int[] occurences = new int[(_largest-_smallest)+1];
 		
 		//then, we fill the list with the occurences of each number appearing, according to its index. so, index 0 will count the occurences of the integer 0, etc
 		for (int i = 0; i < nums.length; i++) {
 			//the reason we subtract nums[i] by smallest is to set the smallest integer at index 0, because what if nums[i] = -1? then what?
-			occurences[nums[i]-smallest]++;
+			occurences[nums[i]-_smallest]++;
+			arrayAccesses++;
 			delay(delay);
 		}
 		
@@ -227,10 +272,11 @@ public class sort {
 		int cumSumOcc = 0;
 		for (int i = 0; i < occurences.length; i++) {
 			for (int x = 0; x < occurences[i]; x++) {
-				nums[cumSumOcc+x] = i+smallest;
+				nums[cumSumOcc+x] = i+_smallest;
 				
 				//System.out.println(arrayToString(nums));
-				visualize.updateIndex(i+smallest, cumSumOcc+x);
+				visualize.updateIndex(i+_smallest, cumSumOcc+x);
+				arrayAccesses++;
 				delay(delay);
 			}
 			cumSumOcc += occurences[i];
@@ -253,6 +299,7 @@ public class sort {
 			
 			//System.out.println(arrayToString(nums));
 		}		
+		
 		return nums;
 	}
 	
