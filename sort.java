@@ -115,12 +115,10 @@ public class sort {
 			for (int i = 0; i < nums.length/2; i++) {
 				firstHalf[i] = nums[i];
 				arrayAccesses++;
-				delay(delay);
 			}
 			for (int i = nums.length/2; i < nums.length; i++) {
 				secondHalf[i-nums.length/2] = nums[i];
 				arrayAccesses++;
-				delay(delay);
 			}
 			
 			firstHalf = merge(firstHalf, delay, _smallest, _smallest+(nums.length/2)-1);
@@ -218,14 +216,12 @@ public class sort {
 			for (int i = 0; i < smallers.length; i++) {
 				smallers[i] = memoryNums[i];
 				arrayAccesses++;
-				delay(delay);
 			}
 			smallers = quick(smallers, delay, _smallest, _smallest+smallersIndex-1);
 			//then, get our sorted section back, and put them back into memoryNums
 			for (int i = 0; i < smallers.length; i++) {
 				memoryNums[i] = smallers[i];
 				arrayAccesses++;
-				delay(delay);
 			}
 			comparisons++;
 		}
@@ -235,14 +231,12 @@ public class sort {
 			for (int i = 0; i < largers.length; i++) {
 				largers[i] = memoryNums[i+smallersIndex+1];
 				arrayAccesses++;
-				delay(delay);
 			}
 			largers = quick(largers, delay, _smallest+smallersIndex+1, _largest);
 			//then, get our sorted section back, and put them back into memoryNums
 			for (int i = 0; i < largers.length; i++) {
 				memoryNums[i+smallersIndex+1] = largers[i];
 				arrayAccesses++;
-				delay(delay);
 			}
 			comparisons++;
 		}
