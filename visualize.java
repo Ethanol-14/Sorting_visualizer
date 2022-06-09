@@ -14,6 +14,11 @@ public class visualize extends JPanel {
 	private static int[] nums = new int[0];
 	private static int largest = 0;
 	
+	private static int greenIndex = 0;
+	private static int greenInt = 0;
+	private static int redIndex = 0;
+	private static int redInt = 0;
+	
 	private static JPanel panel = new visualize();
 	private static JFrame frame = new JFrame("The sight of sorting"); //title for the window
 	
@@ -35,9 +40,20 @@ public class visualize extends JPanel {
 		frame.repaint();
 	}
 	
+	public static void setGreens(int num, int index) { //represents comparisons
+		greenIndex = index;
+		greenInt = num;
+		frame.repaint();
+	}
+	
+	public static void setReds(int num, int index) { //represents array accesses
+		redIndex = index;
+		redInt = num;
+		frame.repaint();
+	}
+	
 	public static void updateIndex(int num, int index) {
 		nums[index] = num;
-		frame.repaint();
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -48,5 +64,10 @@ public class visualize extends JPanel {
 		for (int i = 0; i < nums.length; i++) {	
 			g.fillRect((i*getWidth())/nums.length, getHeight()-((nums[i]*getHeight())/largest), (getWidth()/nums.length)+1, (nums[i]*getHeight())/largest);
 		}
+		
+		g.setColor(Color.green);
+		g.fillRect((greenIndex*getWidth())/nums.length, getHeight()-((greenInt*getHeight())/largest), (getWidth()/nums.length)+1, (greenInt*getHeight())/largest);
+		g.setColor(Color.red);
+		g.fillRect((redIndex*getWidth())/nums.length, getHeight()-((redInt*getHeight())/largest), (getWidth()/nums.length)+1, (redInt*getHeight())/largest);
 	}
 }
