@@ -362,7 +362,7 @@ public class sort {
 		int digit = 0;
 		int largest = nums[0];
 		
-		//once again we need to find the largest int...
+		//once again we need to find the largest int... so we can use its length to determine how many times we need to apply a sort loooking at only one digit of each int
 		for (int i = 1; i < nums.length; i++) {
 			if (nums[i] > largest) {
 				largest = nums[i];
@@ -371,10 +371,8 @@ public class sort {
 			comparisons++;
 			delay(delay);
 		}
-		//then record its length
-		int largestIntLength = String.valueOf(largest).length();
 
-		for (int digitFocus = 0; digitFocus < largestIntLength; digitFocus++) {
+		for (int digitFocus = 0; digitFocus < String.valueOf(largest).length(); digitFocus++) {
 			
 			//iterate through the whole list
 			buckets = new int[10];
@@ -405,22 +403,56 @@ public class sort {
 				}
 				buckets[digit%10]--;
 				memoryNums[buckets[digit%10]] = nums[i];
-				visualize.setGreens(nums[i], i);
+				visualize.updateIndex(memoryNums[buckets[digit%10]], buckets[digit%10]);
+				visualize.setReds(memoryNums[buckets[digit%10]], buckets[digit%10]);
 				arrayAccesses += 2;
 				delay(delay*2);
 			}
-			visualize.setGreens(0, 0);
+			visualize.setReds(0, 0);
 			
-			nums = new int[memoryNums.length];
-			for (int i = 0; i < nums.length; i++) {
-				nums[i] = memoryNums[i];
-				visualize.setReds(nums[i], i);
-				visualize.updateIndex(nums[i], i);
+			//code go brr, more code but also more speed, however that works
+			digitFocus++;
+			if (digitFocus >= String.valueOf(largest).length()) {
+				return memoryNums;
+			}
+			
+			//iterate through the whole list
+			buckets = new int[10];
+			for (int i = 0; i < memoryNums.length; i++) {
+				//find out which digit we want to look at
+				digit = memoryNums[i];
+				for (int x = 0; x < digitFocus; x++) { //continually shaves off the rightmost digit of our integer until we get to our desired digit
+					digit /= 10;
+				}				
+				buckets[digit%10]++; //get the value of that digit we want to look at and at it to the counter list
+				visualize.setGreens(memoryNums[i], i);
 				arrayAccesses++;
 				delay(delay);
 			}
+			visualize.setGreens(0, 0);
+			//now, we accumalate sum of our counter list
+			for (int i = 1; i < 10; i++) {
+				buckets[i] += buckets[i-1];
+				arrayAccesses++;
+				delay(delay);
+			}
+			//now we reiterate through our list but backwards, using clever math to determine which index each integer belongs in
+			for (int i = memoryNums.length-1; i >= 0; i--) {
+				//find out which digit we want to look at
+				digit = memoryNums[i];
+				for (int x = 0; x < digitFocus; x++) { //continually shaves off the rightmost digit of our integer until we get to our desired digit
+					digit /= 10;
+				}
+				buckets[digit%10]--;
+				nums[buckets[digit%10]] = memoryNums[i];
+				visualize.updateIndex(nums[buckets[digit%10]], buckets[digit%10]);
+				visualize.setReds(nums[buckets[digit%10]], buckets[digit%10]);
+				arrayAccesses += 2;
+				delay(delay*2);
+			}
 			visualize.setReds(0, 0);
 		}
+		
 		return nums;
 	}
 	
