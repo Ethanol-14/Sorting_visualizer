@@ -9,12 +9,12 @@ public class main {
 		int[] nums = new int[arrayLength];
 		
 		for (largest = 0; largest < nums.length; largest++) {
-			nums[largest] = largest*largest;
+			nums[largest] = largest;
 		}
 		largest--;
 		
 		//initialize window
-		visualize.init(arrayLength, nums[largest]);
+		visualize.init(arrayLength, largest);
 		
 		for (int loop = 0; loop < tests; loop++) {
 			//shuffle
@@ -22,7 +22,7 @@ public class main {
 			visualize.updateArray(nums, 0, nums.length-1);
 			
 			//sort and print
-			nums = sort.merge(nums, delay, 0, nums.length-1);
+			nums = visualSort.bucket(nums, delay, 0, nums.length-1);
 			
 			//check if sorted
 			if (sort.check(nums)) {
@@ -31,8 +31,8 @@ public class main {
 			else {
 				System.out.println("Incorrectly sorted\n");
 			}
-			System.out.println("Comparisons: "+sort.getComparisons());
-			System.out.println("Array accesses: "+sort.getArrayAccesses());
+			System.out.println("Comparisons: "+visualSort.getComparisons());
+			System.out.println("Array accesses: "+visualSort.getArrayAccesses());
 			sort.reset();
 		}
 	}
